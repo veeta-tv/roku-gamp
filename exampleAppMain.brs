@@ -42,7 +42,7 @@ Function Main(args As Dynamic) As void
     gamobileScreenView("Home")
 
     ' Track an event
-    gamobileEvent("Registation", "Complete")
+    gamobileEvent("Registration", "Complete")
 
     ' Track an exception (unexpected state)
     gamobileException("metadata request returned HTTP status 404")
