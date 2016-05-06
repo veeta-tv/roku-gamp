@@ -47,5 +47,8 @@ Function Main(args As Dynamic) As void
     ' Track an exception (unexpected state)
     gamobileException("metadata request returned HTTP status 404")
 
+    ' Track a transaction
+    gamobileTransaction("Purchase-Code", "", "1.99")
+
 End Function
 

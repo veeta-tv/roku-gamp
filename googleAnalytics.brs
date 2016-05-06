@@ -68,6 +68,9 @@ End Function
 '** Hit types
 '*****************************
 
+'**
+'** PageView is primarily intended for web site tracking but is included here for completeness.
+'**
 Function gamobilePageView(hostname="" As String, page="" As String, title="" As String) As Void
   print "Analytics:PageView: " + page
 
@@ -78,6 +81,9 @@ Function gamobilePageView(hostname="" As String, page="" As String, title="" As 
   gamobileSendHit(params)
 End Function
 
+'**
+'** Use the Event for application state events, such as a login or registration.
+'** 
 Function gamobileEvent(category As String, action As String, label="" As String, value="" As String) As Void
   print "Analytics:Event: " + category + "/" + action
 
@@ -89,6 +95,10 @@ Function gamobileEvent(category As String, action As String, label="" As String,
   gamobileSendHit(params)
 End Function
 
+'**
+'** Use the ScreenView for navigation of screens.  This is useful for identifying popular
+'** categories or determining conversion rates for a video stream.
+'**
 Function gamobileScreenView(screen_name As String) As Void
   print "Analytics:Screen: " + screen_name
 
@@ -97,8 +107,21 @@ Function gamobileScreenView(screen_name As String) As Void
   gamobileSendHit(params)
 End Function
 
-Function gamobileTransaction() As Void
-  'TODO: implement this
+'**
+'** Use the Transaction for in-app purchases or launching a stream.  Some channel publishers may
+'** pay content owners based on number of plays and Transaction would easily track this.
+'**
+'**
+Function gamobileTransaction(transaction_id As String, affiliation="" As String, revenue="" As String, shipping="" As String, tax="" As String) As Void
+  print "Analytics:Transaction: " + transaction_id
+
+  params = "&t=transaction"
+  params = params + "&ti=" + URLEncode(transaction_id)  ' Transaction ID
+  if affiliation <> "" then params = params + "&ta=" + URLEncode(affiliation)   ' Transaction Affiliation
+  if revenue <> "" then params = params + "&tr=" + URLEncode(revenue)           ' Transaction Revenue ("This value should include any shipping or tax costs" - Google)
+  if shipping <> "" then params = params + "&ts=" + URLEncode(shipping)         ' Transaction Shipping
+  if tax <> "" then params = params + "&tt=" + URLEncode(tax)                   ' Transaction Tax
+  gamobileSendHit(params)
 End Function
 
 Function gamobileItem() As Void
@@ -109,6 +132,10 @@ Function gamobileSocial() As Void
   'TODO: implement this
 End Function
 
+'**
+'** Use Exception for reporting unexpected exceptions and errors. This is useful for identifying bad streams
+'** or misbehaving CDNs.
+'**
 Function gamobileException(description As String) As Void
   print "Analytics:Exception: "
   params = "&t=exception"
@@ -120,8 +147,6 @@ End Function
 Function gamobileTiming() As Void
   'TODO: implement this
 End Function
-
-
 
 ' @params   Stringified, encoded parameters appropriate for the hit. Must start with '&'
 Function gamobileSendHit(hit_params As String) As Void
