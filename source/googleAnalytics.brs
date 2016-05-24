@@ -9,19 +9,19 @@
 
 ' *********************************************************
 ' ** The MIT License (MIT)
-' ** 
+' **
 ' ** Copyright (c) 2016 Christopher D Thompson
-' ** 
+' **
 ' ** Permission is hereby granted, free of charge, to any person obtaining a copy
 ' ** of this software and associated documentation files (the "Software"), to deal
 ' ** in the Software without restriction, including without limitation the rights
 ' ** to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 ' ** copies of the Software, and to permit persons to whom the Software is
 ' ** furnished to do so, subject to the following conditions:
-' ** 
+' **
 ' ** The above copyright notice and this permission notice shall be included in all
 ' ** copies or substantial portions of the Software.
-' ** 
+' **
 ' ** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 ' ** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 ' ** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -49,11 +49,10 @@ Function initGAMobile(tracking_id As String, client_id As String) As Void
   gamobile.app_name = app_info.GetTitle()
   gamobile.app_version = app_info.GetVersion()
   gamobile.app_id = app_info.GetID()
-  gamobile.installer_id = "" ' Do we have any other sources besides the official channel store?
-
+  device = createObject("roDeviceInfo")
+  gamobile.installer_id = device.getModel()
   ' single point of on/off for analytics
   gamobile.enable = false
-  
   'set global attributes
   m.gamobile = gamobile
 End Function
@@ -83,7 +82,7 @@ End Function
 
 '**
 '** Use the Event for application state events, such as a login or registration.
-'** 
+'**
 Function gamobileEvent(category As String, action As String, label="" As String, value="" As String) As Void
   print "Analytics:Event: " + category + "/" + action
 
@@ -152,7 +151,7 @@ End Function
 Function gamobileSendHit(hit_params As String) As Void
   if m.gamobile.enable <> true then
     print "Analytics disabled. Skipping report"
-    return 
+    return
   endif
 
   url = m.gamobile.url
@@ -182,5 +181,13 @@ Function gamobileSendHit(hit_params As String) As Void
 
   ' Increment the cache buster
   m.gamobile.next_z = m.gamobile.next_z + 1
-  
+
+End Function
+
+Function tostr(input_string)
+  if type(input_string) = "String" or type(input_string) = "roString"
+    return input_string
+  else
+    return str(input_string)
+  end if
 End Function
