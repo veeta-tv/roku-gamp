@@ -20,4 +20,4 @@ VERSION = 1.0
 
 ZIP_EXCLUDE= -x xml/* -x artwork/* -x \*.pkg -x storeassets\* -x keys\* -x \*/.\* -x *.git* -x *.DS* -x *.pkg*
 
-include ../app.mk
+include app.mk

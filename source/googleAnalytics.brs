@@ -183,11 +183,3 @@ Function gamobileSendHit(hit_params As String) As Void
   m.gamobile.next_z = m.gamobile.next_z + 1
 
 End Function
-
-Function tostr(input_string)
-  if type(input_string) = "String" or type(input_string) = "roString"
-    return input_string
-  else
-    return str(input_string)
-  end if
-End Function
