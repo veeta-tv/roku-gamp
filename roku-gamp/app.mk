@@ -81,7 +81,7 @@ $(APPNAME): manifest
 		chmod 755 $(ZIPREL); \
 	fi
 
-	@echo "  >> copying imports"
+	@echo "  >> copying imports $(IMPORTFILES)"
 	@if [ "$(IMPORTFILES)" ]; \
 	then \
 		mkdir $(APPSOURCEDIR)/common; \
