@@ -1,9 +1,8 @@
 # roku-gamp
 Google Analytics Measurement Protocol for Roku Brightscript
 
-It's recommended that implementers create a [Mobile Analytics](https://www.google.com/analytics/mobile/) account to capture data rather than a web site.
+[googleAnalytics.brs](https://github.com/cdthompson/roku-gamp/blob/master/roku-gamp/source/googleAnalytics.brs) contains the interesting sources.  It requires url.brs and generalUtils.brs from the Roku SDK.
 
-Requires URLEncode helper method in url.brs and generalUtils.brs from the Roku SDK. A copy from the SDK has been included herein to make a complete example app.
 
 # Google Analytics Set-Up
 
