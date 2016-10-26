@@ -171,13 +171,8 @@ Function gamobileSendHit(hit_params As String) As Void
   request.SetRequest("POST")
   request.SetUrl(url)
 
-  ' Asynchronously fire this request off, ignore any response
-  ' TODO: later we want to track all outbound HTTP, even analytics
-  '       for error reporting
-  'request.AsyncPostFromString(full_params)
-  'TODO: For some reason Async doesn't execute, but the following line does.
-  '      Fix this.
-  response = request.PostFromString(full_params)
+  ' Synchronously execute the request, ignoring the response
+  request.PostFromString(full_params)
 
   ' Increment the cache buster
   m.gamobile.next_z = m.gamobile.next_z + 1
