@@ -35,13 +35,13 @@
 '*****************************
 '** Initialization and request firing
 '*****************************
-Function initGAMobile(tracking_id As String, client_id As String) As Void
+Function initGAMobile(tracking_ids As Dynamic, client_id As String) As Void
   gamobile = CreateObject("roAssociativeArray")
 
   ' Set up some invariants
   gamobile.url = "http://www.google-analytics.com/collect"
   gamobile.version = "1"
-  gamobile.tracking_id = tracking_id
+  gamobile.tracking_ids = tracking_ids
   gamobile.client_id = client_id
   gamobile.next_z = 1
 
@@ -158,7 +158,6 @@ Function gamobileSendHit(hit_params As String) As Void
 
   'all formatted body params for the POST
   full_params = "v=" + tostr(m.gamobile.version)
-  full_params = full_params + "&tid=" + URLEncode(m.gamobile.tracking_id)
   full_params = full_params + "&cid=" + URLEncode(m.gamobile.client_id)
   full_params = full_params + "&an=" + URLEncode(m.gamobile.app_name)        ' App name.
   full_params = full_params + "&av=" + URLEncode(m.gamobile.app_version)     ' App version.
@@ -169,11 +168,16 @@ Function gamobileSendHit(hit_params As String) As Void
 
   request = CreateObject("roURLTransfer")
   request.SetRequest("POST")
+  
   request.SetUrl(url)
-
-  ' Synchronously execute the request, ignoring the response
-  request.PostFromString(full_params)
-
+  
+  For Each tracking_id in m.gamobile.tracking_ids
+    postStr = full_params + "&tid=" + URLEncode(tracking_id)                       
+    ' Synchronously execute the request, ignoring the response
+    rc = request.PostFromString(postStr)
+'    ? "POSTed GA ("+rc.ToStr()+") ";postStr 
+  End For
+  
   ' Increment the cache buster
   m.gamobile.next_z = m.gamobile.next_z + 1
 
