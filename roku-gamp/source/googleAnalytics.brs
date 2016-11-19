@@ -38,6 +38,10 @@
 Function initGAMobile(tracking_ids As Dynamic, client_id As String) As Void
   gamobile = CreateObject("roAssociativeArray")
 
+  if type(tracking_ids) = "String"
+    tracking_ids = [tracking_ids]
+  endif
+  
   ' Set up some invariants
   gamobile.url = "http://www.google-analytics.com/collect"
   gamobile.version = "1"
