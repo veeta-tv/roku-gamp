@@ -75,7 +75,7 @@ End Function
 '** PageView is primarily intended for web site tracking but is included here for completeness.
 '**
 Function gamobilePageView(hostname="" As String, page="" As String, title="" As String) As Void
-  print "Analytics:PageView: " + page
+  print "GAnalytics:PageView: " + page
 
   params = "&t=pageview"
   params = params + "&dh=" + URLEncode(hostname)   ' Document hostname
@@ -88,7 +88,7 @@ End Function
 '** Use the Event for application state events, such as a login or registration.
 '**
 Function gamobileEvent(category As String, action As String, label="" As String, value="" As String) As Void
-  print "Analytics:Event: " + category + "/" + action
+  print "GAnalytics:Event: " + category + "/" + action
 
   params = "&t=event"
   params = params + "&ec=" + URLEncode(category)   ' Event Category. Required.
@@ -103,7 +103,7 @@ End Function
 '** categories or determining conversion rates for a video stream.
 '**
 Function gamobileScreenView(screen_name As String) As Void
-  print "Analytics:Screen: " + screen_name
+  print "GAnalytics:Screen: " + screen_name
 
   params = "&t=screenview"
   params = params + "&cd=" + URLEncode(screen_name)                ' Screen name / content description.
@@ -116,7 +116,7 @@ End Function
 '**
 '**
 Function gamobileTransaction(transaction_id As String, affiliation="" As String, revenue="" As String, shipping="" As String, tax="" As String) As Void
-  print "Analytics:Transaction: " + transaction_id
+  print "GAnalytics:Transaction: " + transaction_id
 
   params = "&t=transaction"
   params = params + "&ti=" + URLEncode(transaction_id)  ' Transaction ID
@@ -140,7 +140,7 @@ End Function
 '** or misbehaving CDNs.
 '**
 Function gamobileException(description As String) As Void
-  print "Analytics:Exception: "
+  print "GAnalytics:Exception: "
   params = "&t=exception"
   params = params + "&exd=" + URLEncode(description)  ' Exception description.
   params = params + "&exf=0"                          ' Exception is fatal? (we can't capture fatals in brightscript)
@@ -154,7 +154,7 @@ End Function
 ' @params   Stringified, encoded parameters appropriate for the hit. Must start with '&'
 Function gamobileSendHit(hit_params As String) As Void
   if m.gamobile.enable <> true then
-    print "Analytics disabled. Skipping report"
+    print "GAnalytics disabled. Skipping report"
     return
   endif
 
