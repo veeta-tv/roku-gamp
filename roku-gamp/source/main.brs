@@ -27,13 +27,13 @@
 '************************************************************
 Function Main(args As Dynamic) As void
 
-    gamobile_tracking_id = "tracking-id-here" ' tracking id for this channel
+    gamobile_tracking_ids = ["tracking-id-here"] ' tracking id for this channel
     device = createObject("roDeviceInfo")
     gamobile_client_id = device.GetPublisherId() 'unique, anonymous, per-device id
     enable_tracking = NOT device.IsAdIdTrackingDisabled() 'setting in Roku menu to limit tracking
 
     ' Init analytics
-    initGAMobile(gamobile_tracking_id, gamobile_client_id)
+    initGAMobile(gamobile_tracking_ids, gamobile_client_id)
     if enable_tracking then
       print "Enabling tracking analytics"
       enableGAMobile(true)

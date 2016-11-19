@@ -10,7 +10,7 @@ Log in to your [Google Analytics account](https://analytics.google.com/analytics
 
 Under the "Account" drop down, select "Create new account".
 
-Select "Mobile app" for "What would you like to track". Fill in the other fields as appropriate. Get the tracking id and set it as the `gamobile_tracking_id`.
+Select "Mobile app" for "What would you like to track". Fill in the other fields as appropriate. Get the tracking id and set it as the `gamobile_tracking_ids`.
 
 Back in Google Analytics, under the tracking info section, select "User-ID". Read and agree to the tracking policy. Follow the prompts to set up a view using the User ID.
 
