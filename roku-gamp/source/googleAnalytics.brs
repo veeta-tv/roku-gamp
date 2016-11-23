@@ -35,7 +35,7 @@
 '*****************************
 '** Initialization and request firing
 '*****************************
-Function initGAMobile(tracking_ids As Dynamic, client_id As String, mainThreadMsgPort as Object) As Void
+Function initGAMobile(tracking_ids As Dynamic, client_id As String) As Void
   gamobile = CreateObject("roAssociativeArray")
 
   if type(tracking_ids) = "String"
@@ -56,10 +56,9 @@ Function initGAMobile(tracking_ids As Dynamic, client_id As String, mainThreadMs
   device = createObject("roDeviceInfo")
   gamobile.installer_id = device.getModel()
   ' single point of on/off for analytics
-  gamobile.enable = false
-  
-  gamobile.pendingReqByUUID = {}    ' Since we async HTTP metric requests, hold onto objects so they dont go out of scope (and get killed)
-  gamobile.mainThreadMsgPort = mainThreadMsgPort    ' Handle HTTP async callbacks in main thread so we don't block
+  gamobile.enable = false  
+  gamobile.asyncReqById = {}    ' Since we async HTTP metric requests, hold onto objects so they dont go out of scope (and get killed)
+  gamobile.asyncMsgPort = CreateObject("roMessagePort")
   
   'set global attributes
   m.gamobile = gamobile
@@ -70,24 +69,8 @@ Function enableGAMobile(enable As Boolean) As Void
   m.gamobile.enable = enable
 End Function
 
-Function isGaMobileHttpRequest(requestId as String) as Boolean
-  return m.gamobile.pendingReqByUUID[requestId] <> invalid
-End Function
-
-' Cleanup resources
-Function handleGaMobileHttpResponseEvent(event as Object) as void
-  requestId = event.GetSourceIdentity().ToStr()  
-  
-  if isGaMobileHttpRequest(requestId) 'GA async req completed, clean it up
-    httpRc = event.GetResponseCode()
-    m.gamobile.pendingReqByUUID.Delete(requestId)
-  else 
-    ? "[GA] request did not come from GA. requestId: ";requestId    
-  endif  
-End Function
-
 Function getGaPendingRequestsMap() as Object  
-  return m.gamobile.pendingReqByUUID
+  return m.gamobile.asyncReqById
 End Function
 
 '*****************************
@@ -139,7 +122,7 @@ End Function
 '**
 '**
 Function gamobileTransaction(transaction_id As String, affiliation="" As String, revenue="" As String, shipping="" As String, tax="" As String) As Void
-  ? "[GA] Transaction: " + transaction_id
+  ? "[GA] transaction: " + transaction_id
 
   params = "&t=transaction"
   params = params + "&ti=" + URLEncode(transaction_id)  ' Transaction ID
@@ -196,20 +179,35 @@ Function gamobileSendHit(hit_params As String) As Void
   For Each tracking_id in m.gamobile.tracking_ids
     'New xfer obj needs to be made each request and ref held on to per https://sdkdocs.roku.com/display/sdkdoc/ifUrlTransfer
     request = CreateObject("roURLTransfer")
-'    request.SetRequest("POST")  
     request.SetUrl(url)
-    request.SetMessagePort(m.gamobile.mainThreadMsgPort)
+    request.SetMessagePort(m.gamobile.asyncMsgPort)
   
     postStr = full_params + "&tid=" + URLEncode(tracking_id)                           
     didSend = request.AsyncPostFromString(postStr)        
     requestId = request.GetIdentity().ToStr()
-    m.gamobile.pendingReqByUUID[requestId] = request
+    m.gamobile.asyncReqById[requestId] = request
     
-    ? "[GA] POSTed ("+requestId+")";postStr
+    ? "[GA]gamobileSendHit POSTed ("+requestId+")";postStr
     ' uncomment for debuggin ? "[GA] pending req";getGaPendingRequestsMap()
   End For
+     
+  gamobileCleanupAsyncReq()         
   
   ' Increment the cache buster
   m.gamobile.next_z = m.gamobile.next_z + 1
 
+End Function
+
+' Garbage collect async requests that have completed
+Function gamobileCleanupAsyncReq()
+  For Each rid in m.gamobile.asyncReqById
+    msg = m.gamobile.asyncMsgPort.GetMessage()
+    if type(msg) = "roUrlEvent" and msg.GetInt() = 1    '1=xfer complete. We don't care about GetResponseCode() or GetFailureReason()
+        requestId = msg.GetSourceIdentity().ToStr()   'Because we are sharing same port, get the request id        
+        m.gamobile.asyncReqById.Delete(requestId)                             
+    end if
+  End For 
+  
+  ' uncomment for debuggin 
+  ' ? "[GA] gamobileCleanupAsyncReq pending ";getGaPendingRequestsMap()       
 End Function
