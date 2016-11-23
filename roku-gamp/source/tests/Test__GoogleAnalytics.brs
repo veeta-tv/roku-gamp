@@ -1,5 +1,4 @@
 Function TestSuite__GoogleAnalytics()
-  print "Running TestSuite__GoogleAnalytics()"
   this = BaseTestSuite()
   this.Name = "GoogleAnalyticsTestSuite"
   this.addTest("initializeSingleTIDString",TestCase__GoogleAnalytics_initializeSingleTIDString).
@@ -9,7 +8,6 @@ Function TestSuite__GoogleAnalytics()
 End Function
 
 Function TestCase__GoogleAnalytics_initializeSingleTIDString() as String 
-  print "Running TestSuite__GoogleAnalytics_initializeSingleTIDString()"
   gawrapper  = {
     init: initGAMobile
   }
@@ -21,7 +19,6 @@ Function TestCase__GoogleAnalytics_initializeSingleTIDString() as String
 End Function
 
 Function TestCase__GoogleAnalytics_initializeSingleTIDroString() as String 
-  print "Running TestSuite__GoogleAnalytics_initializeSingleTIDroString()"
   gawrapper  = {
     init: initGAMobile
   }
@@ -34,7 +31,6 @@ Function TestCase__GoogleAnalytics_initializeSingleTIDroString() as String
 End Function
 
 Function TestCase__GoogleAnalytics_initializeMultipleTID() as String 
-  print "Running TestSuite__GoogleAnalytics_initializeMultipleTID()"
   gawrapper  = {
     init: initGAMobile
   }
