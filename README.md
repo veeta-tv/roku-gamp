@@ -37,6 +37,27 @@ Expected output should be:
     Analytics:Exception:
     Analytics:Transaction: Purchase-Code
 
+### Run the unit tests
+
+    $ curl -d '' "http://${ROKU_DEV_TARGET}:8060/launch/dev?RunTests=true"
+    
+Expected output should look like:
+
+    ******************************************************************
+    ******************************************************************
+    *************            Start testing               *************
+    ******************************************************************
+    ***   GoogleAnalyticsTestSuite: initializeSingleTIDString - Success
+    ***   GoogleAnalyticsTestSuite: initializeSingleTIDroString - Fail
+    ***   GoogleAnalyticsTestSuite: initializeMultipleTID - Success
+    ***   GoogleAnalyticsTestSuite: sendHit - Success
+    ***
+    ***   Total  = 4 ; Passed  =  3 ; Failed   =  1 ; Crashes  =  0 Time spent:  1004ms
+    ***
+    ******************************************************************
+    *************             End testing                *************
+    ******************************************************************
+    ******************************************************************
 
 # License
 roku-gamp is released under the MIT License.  See LICENSE file.
