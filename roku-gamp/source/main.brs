@@ -27,6 +27,21 @@
 '************************************************************
 Function Main(args As Dynamic) As void
 
+    '''''''''''''''
+    ' UNIT TESTS
+    '
+    ' After installing channel: curl -d '' "http://${ROKU_DEV_TARGET}:8060/launch/dev?RunTests=true"
+    if args.RunTests <> invalid and args.RunTests = "true" and type(TestRunner) = "Function" then
+      runner = TestRunner()
+      runner.Run()
+      END ' exit after tests
+    end if
+
+
+    '''''''''''''''''
+    ' EXAMPLE USAGE
+    '
+    ' 
     gamobile_tracking_ids = ["tracking-id-here"] ' tracking id for this channel
     device = createObject("roDeviceInfo")
     gamobile_client_id = device.GetPublisherId() 'unique, anonymous, per-device id
