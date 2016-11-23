@@ -187,7 +187,7 @@ Function gamobileSendHit(hit_params As String) As Void
     requestId = request.GetIdentity().ToStr()
     m.gamobile.asyncReqById[requestId] = request
     
-    ? "[GA]gamobileSendHit POSTed ("+requestId+")";postStr
+    ? "[GA] sendHit POSTed ("+requestId+")";postStr
     ' uncomment for debuggin ? "[GA] pending req";getGaPendingRequestsMap()
   End For
      
