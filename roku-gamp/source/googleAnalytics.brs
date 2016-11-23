@@ -74,6 +74,7 @@ Function isGaMobileHttpRequest(requestId as String) as Boolean
   return m.gamobile.pendingReqByUUID[requestId] <> invalid
 End Function
 
+' Cleanup resources
 Function handleGaMobileHttpResponseEvent(event as Object) as void
   requestId = event.GetSourceIdentity().ToStr()  
   
