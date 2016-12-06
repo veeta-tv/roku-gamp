@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+ 
+<component name="GampTask" extends="Task" >
+
+<script type="text/brightscript" uri="pkg:/source/googleAnalytics.brs"/>
+<script type="text/brightscript" uri="pkg:/source/common/generalUtils.brs"/>
+<script type="text/brightscript" uri="pkg:/source/common/url.brs"/>
+ 
+<script type="text/brightscript" >
+<![CDATA[
+ 
+Function init()
+  print "GampTask.init"
+  m.top.functionName = "execGampLoop"
+end Function
+
+Function execGampLoop()
+  print "GampTask.execGampLoop"
+  port = CreateObject("roMessagePort")
+  m.top.observeField("pageView", port)
+  m.top.observeField("event", port)
+  m.top.observeField("screenView", port)
+  m.top.observeField("transaction", port)
+  m.top.observeField("exception", port)
+
+  gamobile_tracking_ids = ["tracking-id-here"] ' tracking id for this channel
+  device = createObject("roDeviceInfo")
+  gamobile_client_id = device.GetPublisherId() 'unique, anonymous, per-device id
+  enable_tracking = NOT device.IsAdIdTrackingDisabled() 'setting in Roku menu to limit tracking
+
+  ' Init analytics
+  initGAMobile(gamobile_tracking_ids, gamobile_client_id)
+  if enable_tracking then
+    print "Enabling tracking analytics"
+    enableGAMobile(true)
+  endif
+
+
+  while true
+    msg = wait(0, port)
+    if type(msg) = "roSGNodeEvent" then
+      field = msg.getField()
+      data = msg.getData()
+      if field = "pageView" then
+        if data.hostname = invalid then data.hostname = ""
+        if data.page = invalid then data.page = ""
+        if data.title = invalid then data.title = ""
+        gamobilePageView(data.hostname, data.page, data.title)
+      else if field = "event" then
+        if data.category = invalid then data.category = ""
+        if data.action = invalid then data.action = ""
+        if data.label = invalid then data.label = ""
+        if data.value = invalid then data.value = ""
+        gamobileEvent(data.category, data.action, data.label, data.value)
+      else if field = "screenView" then
+        if data.screenName = invalid then data.screenName = ""
+        gamobileScreenView(data.screenName)
+      else if field = "transaction" then
+        if data.transactionId = invalid then data.transactionId = ""
+        if data.affiliation = invalid then data.affiliation = ""
+        if data.revenue = invalid then data.revenue = ""
+        if data.shipping = invalid then data.shipping = ""
+        if data.tax = invalid then data.tax = ""
+        gamobileTransaction(data.transactionId, data.affiliation, data.revenue, data.shipping, data.tax)
+      else if field = "exception" then
+        if data.description = invalid then data.description = ""
+        gamobileException(data.description)
+      end if
+    end if
+  end while
+  
+End Function
+ 
+]]>
+</script>
+ 
+  <interface>
+    <!-- 
+      -
+      - pageView should contain:
+      -   {
+      -     hostname: <optional>
+      -     page: <optional>
+      -     title:  <optional>
+      -   }
+      -
+      -->
+    <field id="pageView" type="assocarray"/>
+
+    <!-- 
+      -
+      -  event should contain:
+      -   {
+      -     category: <required>
+      -     action: <required>
+      -     label:  <optional>
+      -     value:  <optional>
+      -   }
+      -
+      -->
+    <field id="event" type="assocarray"/>
+
+    <!-- 
+      -
+      -  screeView should contain:
+      -   {
+      -     screenName: <required>
+      -   }
+      -
+      -->
+    <field id="screenView" type="assocarray"/>
+
+    <!-- 
+      -
+      -  transaction should contain:
+      -   {
+      -     transactionId: <required>
+      -     affiliation: <optional>
+      -     revenue: <optional>
+      -     shipping: <optional>
+      -     tax: <optional>
+      -   }
+      -
+      -->
+    <field id="transaction" type="assocarray"/>
+
+    <!-- 
+      -
+      -  exception should contain:
+      -   {
+      -     description: <required>
+      -   }
+      -
+      -->
+    <field id="exception" type="assocarray"/>
+  </interface>
+</component>

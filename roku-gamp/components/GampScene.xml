@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+ 
+<component name="GampScene" extends="Scene" >
+ 
+<script type="text/brightscript" >
+<![CDATA[
+ 
+Function init()
+  print "GampScene.init"
+  m.top.setFocus(true)
+  m.gampTask = m.top.findNode("GampTask")
+  m.gampTask.control = "RUN"
+  m.timer = m.top.findNode("EventsTimer")
+  m.timer.observeField("fire", "onTimer")
+  m.timer.control = "start"
+
+
+  ' Fake events to send
+  m.eventIndex = 0
+end Function
+
+Function onTimer()
+  print "GampScene.timer"
+  m.eventIndex += 1
+  if m.eventIndex >= 4 then m.timer.control = "stop"
+  if m.eventIndex = 0
+    m.gampTask.screenView = { screenName: "Home" }
+  else if m.eventIndex = 1
+    m.gampTask.event = { category: "Registration", action: "Complete" }
+  else if m.eventIndex = 2
+    m.gampTask.exception = { description: "metadata request returned HTTP status 404" }
+  else if m.eventIndex = 3
+    m.gampTask.transaction = { transactionId: "Purchase-Code", affiliation: "", revenue: "1.99" }
+  end if
+End Function
+ 
+]]>
+</script>
+ 
+  <children>
+    <GampTask
+      id="GampTask"/>
+
+    <Timer
+      id="EventsTimer"
+      repeat="true" />
+  </children>
+ 
+</component>
