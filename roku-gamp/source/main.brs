@@ -38,6 +38,17 @@ Function Main(args As Dynamic) As void
     end if
 
 
+    if args.SceneGraph <> invalid and args.SceneGraph = "true" then
+      print "Running SceneGraph example"
+      screen = CreateObject("roSGScreen")
+      scene = screen.CreateScene("GampScene")
+      screen.show()
+      while true
+        msg = wait(6000, screen.GetMessagePort())
+      end while
+      END
+    end if
+
     '''''''''''''''''
     ' EXAMPLE USAGE
     '
