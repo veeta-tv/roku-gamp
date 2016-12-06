@@ -60,10 +60,11 @@ Function initGAMobile(tracking_ids As Dynamic, client_id As String) As Void
   gamobile.asyncReqById = {}    ' Since we async HTTP metric requests, hold onto objects so they dont go out of scope (and get killed)
   gamobile.asyncMsgPort = CreateObject("roMessagePort")
   
+  gamobile.debug = false
+  
   'set global attributes
   m.gamobile = gamobile
 End Function
-
 
 Function enableGAMobile(enable As Boolean) As Void
   m.gamobile.enable = enable
@@ -71,6 +72,10 @@ End Function
 
 Function getGaPendingRequestsMap() as Object  
   return m.gamobile.asyncReqById
+End Function
+
+Function setGADebug(enable As Boolean) As Void
+  m.gamobile.debug = enable
 End Function
 
 '*****************************
@@ -186,9 +191,11 @@ Function gamobileSendHit(hit_params As String) As Void
     didSend = request.AsyncPostFromString(postStr)        
     requestId = request.GetIdentity().ToStr()
     m.gamobile.asyncReqById[requestId] = request
-    
-    ? "[GA] sendHit POSTed ("+requestId+")";postStr
-    ' uncomment for debuggin ? "[GA] pending req";getGaPendingRequestsMap()
+
+    if m.gamobile.debug
+      ? "[GA] sendHit POSTed ("+requestId+")";postStr
+      ? "[GA] pending req";getGaPendingRequestsMap()
+    end if
   End For
      
   gamobileCleanupAsyncReq()         
@@ -208,6 +215,7 @@ Function gamobileCleanupAsyncReq()
     end if
   End For 
   
-  ' uncomment for debuggin 
-  ' ? "[GA] gamobileCleanupAsyncReq pending ";getGaPendingRequestsMap()       
+  if m.gamobile.debug
+    ? "[GA] gamobileCleanupAsyncReq pending ";getGaPendingRequestsMap()       
+  end if    
 End Function
