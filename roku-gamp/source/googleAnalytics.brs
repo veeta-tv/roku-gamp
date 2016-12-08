@@ -86,7 +86,7 @@ End Function
 '** PageView is primarily intended for web site tracking but is included here for completeness.
 '**
 Function gamobilePageView(hostname="" As String, page="" As String, title="" As String) As Void
-  if m.gamobile.enable <> true then
+  if m.gamobile.debug
     ? "[GA] PageView: " + page
   end if
 
@@ -101,7 +101,7 @@ End Function
 '** Use the Event for application state events, such as a login or registration.
 '**
 Function gamobileEvent(category As String, action As String, label="" As String, value="" As String) As Void
-  if m.gamobile.enable <> true then
+  if m.gamobile.debug
     ? "[GA] Event: " + category + "/" + action
   end if
 
@@ -118,7 +118,7 @@ End Function
 '** categories or determining conversion rates for a video stream.
 '**
 Function gamobileScreenView(screen_name As String) As Void
-  if m.gamobile.enable <> true then
+  if m.gamobile.debug
     ? "[GA] Screen: " + screen_name
   end if
 
@@ -133,7 +133,7 @@ End Function
 '**
 '**
 Function gamobileTransaction(transaction_id As String, affiliation="" As String, revenue="" As String, shipping="" As String, tax="" As String) As Void
-  if m.gamobile.enable <> true then
+  if m.gamobile.debug
     ? "[GA] transaction: " + transaction_id
   end if
 
