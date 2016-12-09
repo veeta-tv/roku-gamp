@@ -159,7 +159,10 @@ End Function
 '** or misbehaving CDNs.
 '**
 Function gamobileException(description As String) As Void
-  ? "[GA] Exception: "
+  if m.gamobile.debug
+    ? "[GA] Exception: "
+  end if
+  
   params = "&t=exception"
   params = params + "&exd=" + URLEncode(description)  ' Exception description.
   params = params + "&exf=0"                          ' Exception is fatal? (we can't capture fatals in brightscript)
