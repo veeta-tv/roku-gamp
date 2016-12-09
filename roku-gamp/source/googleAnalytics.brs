@@ -41,7 +41,7 @@ Function initGAMobile(tracking_ids As Dynamic, client_id As String) As Void
   if type(tracking_ids) = "String"
     tracking_ids = [tracking_ids]
   endif
-  
+
   ' Set up some invariants
   gamobile.url = "http://www.google-analytics.com/collect"
   gamobile.version = "1"
@@ -56,12 +56,12 @@ Function initGAMobile(tracking_ids As Dynamic, client_id As String) As Void
   device = createObject("roDeviceInfo")
   gamobile.installer_id = device.getModel()
   ' single point of on/off for analytics
-  gamobile.enable = false  
+  gamobile.enable = false
   gamobile.asyncReqById = {}    ' Since we async HTTP metric requests, hold onto objects so they dont go out of scope (and get killed)
   gamobile.asyncMsgPort = CreateObject("roMessagePort")
-  
+
   gamobile.debug = false
-  
+
   'set global attributes
   m.gamobile = gamobile
 End Function
@@ -70,7 +70,7 @@ Function enableGAMobile(enable As Boolean) As Void
   m.gamobile.enable = enable
 End Function
 
-Function getGaPendingRequestsMap() as Object  
+Function getGaPendingRequestsMap() as Object
   return m.gamobile.asyncReqById
 End Function
 
@@ -86,7 +86,9 @@ End Function
 '** PageView is primarily intended for web site tracking but is included here for completeness.
 '**
 Function gamobilePageView(hostname="" As String, page="" As String, title="" As String) As Void
-  ? "[GA] PageView: " + page
+  if m.gamobile.debug
+    ? "[GA] PageView: " + page
+  end if
 
   params = "&t=pageview"
   params = params + "&dh=" + URLEncode(hostname)   ' Document hostname
@@ -99,7 +101,9 @@ End Function
 '** Use the Event for application state events, such as a login or registration.
 '**
 Function gamobileEvent(category As String, action As String, label="" As String, value="" As String) As Void
-  ? "[GA] Event: " + category + "/" + action
+  if m.gamobile.debug
+    ? "[GA] Event: " + category + "/" + action
+  end if
 
   params = "&t=event"
   params = params + "&ec=" + URLEncode(category)   ' Event Category. Required.
@@ -114,7 +118,9 @@ End Function
 '** categories or determining conversion rates for a video stream.
 '**
 Function gamobileScreenView(screen_name As String) As Void
-  ? "[GA] Screen: " + screen_name
+  if m.gamobile.debug
+    ? "[GA] Screen: " + screen_name
+  end if
 
   params = "&t=screenview"
   params = params + "&cd=" + URLEncode(screen_name)                ' Screen name / content description.
@@ -127,7 +133,9 @@ End Function
 '**
 '**
 Function gamobileTransaction(transaction_id As String, affiliation="" As String, revenue="" As String, shipping="" As String, tax="" As String) As Void
-  ? "[GA] transaction: " + transaction_id
+  if m.gamobile.debug
+    ? "[GA] transaction: " + transaction_id
+  end if
 
   params = "&t=transaction"
   params = params + "&ti=" + URLEncode(transaction_id)  ' Transaction ID
@@ -151,7 +159,10 @@ End Function
 '** or misbehaving CDNs.
 '**
 Function gamobileException(description As String) As Void
-  ? "[GA] Exception: "
+  if m.gamobile.debug
+    ? "[GA] Exception: "
+  end if
+  
   params = "&t=exception"
   params = params + "&exd=" + URLEncode(description)  ' Exception description.
   params = params + "&exf=0"                          ' Exception is fatal? (we can't capture fatals in brightscript)
@@ -165,7 +176,9 @@ End Function
 ' @params   Stringified, encoded parameters appropriate for the hit. Must start with '&'
 Function gamobileSendHit(hit_params As String) As Void
   if m.gamobile.enable <> true then
-    ? "[GA] disabled. Skipping POST"
+    if m.gamobile.debug
+      ? "[GA] disabled. Skipping POST"
+    end if
     return
   endif
 
@@ -180,15 +193,15 @@ Function gamobileSendHit(hit_params As String) As Void
   full_params = full_params + "&aiid=" + URLEncode(m.gamobile.installer_id)  ' App Installer Id.
   full_params = full_params + hit_params
   full_params = full_params + "&z=" + tostr(m.gamobile.next_z)  ' Cache buster
-   
+
   For Each tracking_id in m.gamobile.tracking_ids
     'New xfer obj needs to be made each request and ref held on to per https://sdkdocs.roku.com/display/sdkdoc/ifUrlTransfer
     request = CreateObject("roURLTransfer")
     request.SetUrl(url)
     request.SetMessagePort(m.gamobile.asyncMsgPort)
-  
-    postStr = full_params + "&tid=" + URLEncode(tracking_id)                           
-    didSend = request.AsyncPostFromString(postStr)        
+
+    postStr = full_params + "&tid=" + URLEncode(tracking_id)
+    didSend = request.AsyncPostFromString(postStr)
     requestId = request.GetIdentity().ToStr()
     m.gamobile.asyncReqById[requestId] = request
 
@@ -197,9 +210,9 @@ Function gamobileSendHit(hit_params As String) As Void
       ? "[GA] pending req";getGaPendingRequestsMap()
     end if
   End For
-     
-  gamobileCleanupAsyncReq()         
-  
+
+  gamobileCleanupAsyncReq()
+
   ' Increment the cache buster
   m.gamobile.next_z = m.gamobile.next_z + 1
 
@@ -210,12 +223,12 @@ Function gamobileCleanupAsyncReq()
   For Each rid in m.gamobile.asyncReqById
     msg = m.gamobile.asyncMsgPort.GetMessage()
     if type(msg) = "roUrlEvent" and msg.GetInt() = 1    '1=xfer complete. We don't care about GetResponseCode() or GetFailureReason()
-        requestId = msg.GetSourceIdentity().ToStr()   'Because we are sharing same port, get the request id        
-        m.gamobile.asyncReqById.Delete(requestId)                             
+        requestId = msg.GetSourceIdentity().ToStr()   'Because we are sharing same port, get the request id
+        m.gamobile.asyncReqById.Delete(requestId)
     end if
-  End For 
-  
+  End For
+
   if m.gamobile.debug
-    ? "[GA] gamobileCleanupAsyncReq pending ";getGaPendingRequestsMap()       
-  end if    
+    ? "[GA] gamobileCleanupAsyncReq pending ";getGaPendingRequestsMap()
+  end if
 End Function
