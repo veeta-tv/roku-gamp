@@ -173,7 +173,9 @@ End Function
 ' @params   Stringified, encoded parameters appropriate for the hit. Must start with '&'
 Function gamobileSendHit(hit_params As String) As Void
   if m.gamobile.enable <> true then
-    ? "[GA] disabled. Skipping POST"
+    if m.gamobile.debug
+      ? "[GA] disabled. Skipping POST"
+    end if
     return
   endif
 
