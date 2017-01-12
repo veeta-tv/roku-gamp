@@ -35,7 +35,7 @@
 '*****************************
 '** Initialization and request firing
 '*****************************
-Function initGAMobile(tracking_ids As Dynamic, client_id As String) As Void
+Function initGAMobile(tracking_ids As Dynamic, client_id As String, app_name_override = "" As string) As Void
   gamobile = CreateObject("roAssociativeArray")
 
   if type(tracking_ids) = "String"
@@ -50,7 +50,11 @@ Function initGAMobile(tracking_ids As Dynamic, client_id As String) As Void
   gamobile.next_z = 1
 
   app_info = CreateObject("roAppInfo")
-  gamobile.app_name = app_info.GetTitle()
+  if app_name_override <> ""
+    gamobile.app_name = app_name_override
+  else
+    gamobile.app_name = app_info.GetTitle()
+  end if
   gamobile.app_version = app_info.GetVersion()
   gamobile.app_id = app_info.GetID()
   device = createObject("roDeviceInfo")
