@@ -38,7 +38,7 @@
 Function initGAMobile(tracking_ids As Dynamic, client_id As String, custom_session_params={} As Object) As Void
   gamobile = CreateObject("roAssociativeArray")
 
-  if type(tracking_ids) = "String"
+  if type(tracking_ids) <> "roArray" then
     tracking_ids = [tracking_ids]
   endif
 
