@@ -35,7 +35,7 @@
 '*****************************
 '** Initialization and request firing
 '*****************************
-Function initGAMobile(tracking_ids As Dynamic, client_id As String) As Void
+Function initGAMobile(tracking_ids As Dynamic, client_id As String, custom_session_params={} As Object) As Void
   gamobile = CreateObject("roAssociativeArray")
 
   if type(tracking_ids) = "String"
@@ -46,15 +46,24 @@ Function initGAMobile(tracking_ids As Dynamic, client_id As String) As Void
   gamobile.url = "http://www.google-analytics.com/collect"
   gamobile.version = "1"
   gamobile.tracking_ids = tracking_ids
-  gamobile.client_id = client_id
   gamobile.next_z = 1
 
+  ' Default session params
   app_info = CreateObject("roAppInfo")
-  gamobile.app_name = app_info.GetTitle()
-  gamobile.app_version = app_info.GetVersion()
-  gamobile.app_id = app_info.GetID()
   device = createObject("roDeviceInfo")
-  gamobile.installer_id = device.getModel()
+  gamobile.session_params = {
+    an: URLEncode(app_info.GetTitle())        ' App name.
+    av: URLEncode(app_info.GetVersion())      ' App version.
+    aid: URLEncode(app_info.GetID())          ' App Id.
+    cid: URLEncode(client_id)                 ' Client Id
+    aiid: URLEncode(device.getModel())        ' App Installer Id.
+  }
+
+  ' Allow any arbitrary params to be sent with the hits
+  if custom_session_params <> invalid and type(custom_session_params) = "roAssociativeArray" then
+    gamobile.session_params.append(custom_session_params)
+  end if
+
   ' single point of on/off for analytics
   gamobile.enable = false
   gamobile.asyncReqById = {}    ' Since we async HTTP metric requests, hold onto objects so they dont go out of scope (and get killed)
@@ -89,12 +98,14 @@ Function gamobilePageView(hostname="" As String, page="" As String, title="" As 
   if m.gamobile.debug
     ? "[GA] PageView: " + page
   end if
-
-  params = "&t=pageview"
-  params = params + "&dh=" + URLEncode(hostname)   ' Document hostname
-  params = params + "&dp=" + URLEncode(page)       ' Page
-  params = params + "&dt=" + URLEncode(title)      ' Title
-  gamobileSendHit(params)
+  
+  hit_params = {
+    t: "pageview"
+    dh: URLEncode(hostname)   ' Document hostname
+    dp: URLEncode(page)       ' Page
+    dt: URLEncode(title)      ' Title
+  }
+  gamobileSendHit(hit_params)
 End Function
 
 '**
@@ -105,12 +116,14 @@ Function gamobileEvent(category As String, action As String, label="" As String,
     ? "[GA] Event: " + category + "/" + action
   end if
 
-  params = "&t=event"
-  params = params + "&ec=" + URLEncode(category)   ' Event Category. Required.
-  params = params + "&ea=" + URLEncode(action)     ' Event Action. Required.
-  if label <> "" then params = params + "&el=" + URLEncode(label)      ' Event label.
-  if value <> "" then params = params + "&ev=" + URLEncode(value)      ' Event value.
-  gamobileSendHit(params)
+  hit_params = {
+    t: "event"
+    ec: URLEncode(category)   ' Event Category. Required.
+    ea: URLEncode(action)     ' Event Action. Required.
+  }
+  if label <> "" then hit_params.el = URLEncode(label)      ' Event label.
+  if value <> "" then hit_params.ev = URLEncode(value)      ' Event value.
+  gamobileSendHit(hit_params)
 End Function
 
 '**
@@ -122,9 +135,11 @@ Function gamobileScreenView(screen_name As String) As Void
     ? "[GA] Screen: " + screen_name
   end if
 
-  params = "&t=screenview"
-  params = params + "&cd=" + URLEncode(screen_name)                ' Screen name / content description.
-  gamobileSendHit(params)
+  hit_params = {
+    t: "screenview"
+    cd: URLEncode(screen_name)                ' Screen name / content description.
+  }
+  gamobileSendHit(hit_params)
 End Function
 
 '**
@@ -137,13 +152,15 @@ Function gamobileTransaction(transaction_id As String, affiliation="" As String,
     ? "[GA] transaction: " + transaction_id
   end if
 
-  params = "&t=transaction"
-  params = params + "&ti=" + URLEncode(transaction_id)  ' Transaction ID
-  if affiliation <> "" then params = params + "&ta=" + URLEncode(affiliation)   ' Transaction Affiliation
-  if revenue <> "" then params = params + "&tr=" + URLEncode(revenue)           ' Transaction Revenue ("This value should include any shipping or tax costs" - Google)
-  if shipping <> "" then params = params + "&ts=" + URLEncode(shipping)         ' Transaction Shipping
-  if tax <> "" then params = params + "&tt=" + URLEncode(tax)                   ' Transaction Tax
-  gamobileSendHit(params)
+  hit_params = {
+    t: "transaction"
+    ti: URLEncode(transaction_id)  ' Transaction ID
+  }
+  if affiliation <> "" then hit_params.ta = URLEncode(affiliation)   ' Transaction Affiliation
+  if revenue <> "" then hit_params.tr = URLEncode(revenue)           ' Transaction Revenue ("This value should include any shipping or tax costs" - Google)
+  if shipping <> "" then hit_params.ts = URLEncode(shipping)         ' Transaction Shipping
+  if tax <> "" then hit_params.tt = URLEncode(tax)                   ' Transaction Tax
+  gamobileSendHit(hit_params)
 End Function
 
 Function gamobileItem() As Void
@@ -163,18 +180,20 @@ Function gamobileException(description As String) As Void
     ? "[GA] Exception: "
   end if
   
-  params = "&t=exception"
-  params = params + "&exd=" + URLEncode(description)  ' Exception description.
-  params = params + "&exf=0"                          ' Exception is fatal? (we can't capture fatals in brightscript)
-  gamobileSendHit(params)
+  hit_params = {
+    t: "exception" 
+    exd: URLEncode(description)       ' Exception description.
+    exf: "0"                          ' Exception is fatal? (we can't capture fatals in brightscript)
+  }
+  gamobileSendHit(hit_params)
 End Function
 
 Function gamobileTiming() As Void
   'TODO: implement this
 End Function
 
-' @params   Stringified, encoded parameters appropriate for the hit. Must start with '&'
-Function gamobileSendHit(hit_params As String) As Void
+' @hit_params   Associative array of params with string keys and values.  Values must already be URLEncoded
+Function gamobileSendHit(hit_params As Object) As Void
   if m.gamobile.enable <> true then
     if m.gamobile.debug
       ? "[GA] disabled. Skipping POST"
@@ -184,15 +203,20 @@ Function gamobileSendHit(hit_params As String) As Void
 
   url = m.gamobile.url
 
-  'all formatted body params for the POST
-  full_params = "v=" + tostr(m.gamobile.version)
-  full_params = full_params + "&cid=" + URLEncode(m.gamobile.client_id)
-  full_params = full_params + "&an=" + URLEncode(m.gamobile.app_name)        ' App name.
-  full_params = full_params + "&av=" + URLEncode(m.gamobile.app_version)     ' App version.
-  full_params = full_params + "&aid=" + URLEncode(m.gamobile.app_id)         ' App Id.
-  full_params = full_params + "&aiid=" + URLEncode(m.gamobile.installer_id)  ' App Installer Id.
-  full_params = full_params + hit_params
+  ' first set immutables  
+  full_params = "v=" + tostr(m.gamobile.version)                ' Measurement Protocol Version
   full_params = full_params + "&z=" + tostr(m.gamobile.next_z)  ' Cache buster
+
+  ' next set session and hit params.  hit params can override session params
+  merged_params = {}
+  for each sp in m.gamobile.session_params
+    merged_params[sp] = m.gamobile.session_params[sp]
+  end for
+  merged_params.Append(hit_params)
+
+  for each mp in merged_params
+    full_params = full_params + "&" + mp + "=" + merged_params[mp]
+  end for
 
   For Each tracking_id in m.gamobile.tracking_ids
     'New xfer obj needs to be made each request and ref held on to per https://sdkdocs.roku.com/display/sdkdoc/ifUrlTransfer
