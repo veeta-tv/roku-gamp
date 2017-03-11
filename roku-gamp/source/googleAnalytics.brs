@@ -205,7 +205,6 @@ Function gamobileSendHit(hit_params As Object) As Void
 
   ' first set immutables  
   full_params = "v=" + tostr(m.gamobile.version)                ' Measurement Protocol Version
-  full_params = full_params + "&z=" + tostr(m.gamobile.next_z)  ' Cache buster
 
   ' next set session and hit params.  hit params can override session params
   merged_params = {}
@@ -225,6 +224,11 @@ Function gamobileSendHit(hit_params As Object) As Void
     request.SetMessagePort(m.gamobile.asyncMsgPort)
 
     postStr = full_params + "&tid=" + URLEncode(tracking_id)
+
+    ' Cache buster; docs say this should be last
+    postStr = postStr + "&z=" + tostr(m.gamobile.next_z)
+    m.gamobile.next_z = m.gamobile.next_z + 1
+
     didSend = request.AsyncPostFromString(postStr)
     requestId = request.GetIdentity().ToStr()
     m.gamobile.asyncReqById[requestId] = request
@@ -236,9 +240,6 @@ Function gamobileSendHit(hit_params As Object) As Void
   End For
 
   gamobileCleanupAsyncReq()
-
-  ' Increment the cache buster
-  m.gamobile.next_z = m.gamobile.next_z + 1
 
 End Function
 
