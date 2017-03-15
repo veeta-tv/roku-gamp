@@ -32,7 +32,8 @@ Function TestCase__GoogleAnalytics_initializeSingleTIDString() as String
   initGAMobile("test-tracking-id", "test-client-id")
   result = m.AssertNotInvalid(GetGlobalAA().gamobile)
   result = result + m.AssertEqual(type(GetGlobalAA().gamobile.tracking_ids), "roArray")
-  result = result + m.AssertArrayContainsOnly(GetGlobalAA().gamobile.tracking_ids, "String")
+  result = result + m.AssertEqual(GetGlobalAA().gamobile.tracking_ids.count(), 1)
+  result = result + m.AssertEqual(type(GetGlobalAA().gamobile.tracking_ids[0]), "roString")
   return result
 End Function
 
@@ -42,6 +43,8 @@ Function TestCase__GoogleAnalytics_initializeSingleTIDroString() as String
   initGAMobile(trackingId, "test-client-id")
   result = m.AssertNotInvalid(GetGlobalAA().gamobile)
   result = result + m.AssertEqual(type(GetGlobalAA().gamobile.tracking_ids), "roArray")
+  result = result + m.AssertEqual(GetGlobalAA().gamobile.tracking_ids.count(), 1)
+  result = result + m.AssertEqual(type(GetGlobalAA().gamobile.tracking_ids[0]), "roString")
   return result
 End Function
 
@@ -49,6 +52,9 @@ Function TestCase__GoogleAnalytics_initializeMultipleTID() as String
   initGAMobile(["test-tracking-id-1", "test-tracking-id-2"], "test-client-id")
   result = m.AssertNotInvalid(GetGlobalAA().gamobile)
   result = result + m.AssertEqual(type(GetGlobalAA().gamobile.tracking_ids), "roArray")
+  result = result + m.AssertEqual(GetGlobalAA().gamobile.tracking_ids.count(), 2)
+  result = result + m.AssertEqual(type(GetGlobalAA().gamobile.tracking_ids[0]), "roString")
+  result = result + m.AssertEqual(type(GetGlobalAA().gamobile.tracking_ids[1]), "roString")
   return result
 End Function
 
