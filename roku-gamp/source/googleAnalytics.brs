@@ -91,9 +91,15 @@ End Function
 '** Hit types
 '*****************************
 
-'**
-'** PageView is primarily intended for web site tracking but is included here for completeness.
-'**
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' PageView is primarily intended for web site tracking but is included here for completeness.
+'
+' | Parameter | Value Type  | Default Value | Max Length
+' ------------------------------------------------------
+' | hostname  | text        | None          | 100 Bytes
+' | page      | text        | None          | 2048 Bytes
+' | title     | text        | None          | 1500 Bytes
+'
 Function gamobilePageView(hostname="" As String, page="" As String, title="" As String) As Void
   if m.gamobile.debug
     ? "[GA] PageView: " + page
@@ -108,9 +114,17 @@ Function gamobilePageView(hostname="" As String, page="" As String, title="" As 
   gamobileSendHit(hit_params)
 End Function
 
-'**
-'** Use the Event for application state events, such as a login or registration.
-'**
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Use the Event for application state events, such as a login or registration.
+'
+' | Parameter | Value Type  | Default Value | Max Length
+' ------------------------------------------------------
+' | category  | text        | None          | 150 Bytes
+' | action    | text        | None          | 500 Bytes
+' | label     | text        | None          | 500 Bytes
+' | value     | integer     | None          | None
+'
 Function gamobileEvent(category As String, action As String, label="" As String, value="" As String) As Void
   if m.gamobile.debug
     ? "[GA] Event: " + category + "/" + action
@@ -126,10 +140,15 @@ Function gamobileEvent(category As String, action As String, label="" As String,
   gamobileSendHit(hit_params)
 End Function
 
-'**
-'** Use the ScreenView for navigation of screens.  This is useful for identifying popular
-'** categories or determining conversion rates for a video stream.
-'**
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Use the ScreenView for navigation of screens.  This is useful for identifying popular
+' categories or determining conversion rates for a video stream.
+'
+' | Parameter   | Value Type  | Default Value | Max Length
+' ------------------------------------------------------
+' | screen_name | text        | None          | 2048 Bytes
+'
 Function gamobileScreenView(screen_name As String) As Void
   if m.gamobile.debug
     ? "[GA] Screen: " + screen_name
@@ -142,11 +161,19 @@ Function gamobileScreenView(screen_name As String) As Void
   gamobileSendHit(hit_params)
 End Function
 
-'**
-'** Use the Transaction for in-app purchases or launching a stream.  Some channel publishers may
-'** pay content owners based on number of plays and Transaction would easily track this.
-'**
-'**
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' Use the Transaction for in-app purchases or launching a stream.  Some channel publishers may
+' pay content owners based on number of plays and Transaction would easily track this.
+'
+' | Parameter       | Value Type  | Default Value | Max Length
+' -----------------------------------------------------------
+' | transaction_id  | text        | None          | 500 Bytes
+' | affiliation     | text        | None          | 500 Bytes
+' | revenue         | currency    | 0             | None
+' | shipping        | currency    | 0             | None
+' | tax             | currency    | 0             | None
+'
 Function gamobileTransaction(transaction_id As String, affiliation="" As String, revenue="" As String, shipping="" As String, tax="" As String) As Void
   if m.gamobile.debug
     ? "[GA] transaction: " + transaction_id
