@@ -72,6 +72,13 @@ Function execGampLoop()
     enableGAMobile(true)
   endif
 
+  ' Enable or disable debug here for viewing events on the console
+  setGADebug(true)
+
+  ' Apps which use this long-lived task should delay any writes to the reporting fields (pageView, etc.)
+  ' until this is set to true.  This is because there is a non-zero time from setting control = "RUN"
+  ' until the time when the reporting fields are being observed.
+  m.top.ready = true
 
   while true
     msg = wait(0, port)
@@ -113,6 +120,11 @@ End Function
  
   <interface>
     <!-- 
+     - Set to true once the execGampLoop function is up and observing the reporting fields
+     -->
+    <field id="ready" type="boolean" value="false"/>
+
+    <!--
       -
       - pageView should contain:
       -   {

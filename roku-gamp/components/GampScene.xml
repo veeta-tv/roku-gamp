@@ -32,15 +32,19 @@ Function init()
   print "GampScene.init"
   m.top.setFocus(true)
   m.gampTask = m.top.findNode("GampTask")
+  m.gampTask.observeField("ready", "startApp")
   m.gampTask.control = "RUN"
-  m.timer = m.top.findNode("EventsTimer")
-  m.timer.observeField("fire", "onTimer")
-  m.timer.control = "start"
-
-
-  ' Fake events to send
-  m.eventIndex = 0
 end Function
+
+Function startApp()
+  if m.gampTask.ready then
+    m.timer = m.top.findNode("EventsTimer")
+    m.timer.observeField("fire", "onTimer")
+    m.timer.control = "start"
+    ' Fake events to send
+    m.eventIndex = 0
+  end if
+End Function
 
 Function onTimer()
   print "GampScene.timer"
