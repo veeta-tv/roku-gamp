@@ -46,7 +46,7 @@ Substitute appropriate Roku device IP address and developer password here
 
 ### Run SDK1 example:
 
-    $ cd roku-gamp && make install
+    $ make -C roku-gamp install
 
 Expected console output should be:
 
@@ -59,7 +59,7 @@ Expected console output should be:
 
 ### Run SceneGraph example:
 
-    $ make scenegraph
+    $ make -C roku-gamp scenegraph
 
 Expected console output should be:
 
@@ -72,7 +72,7 @@ Expected console output should be:
 
 ### Run the unit tests:
 
-    $ make test
+    $ make -C roku-gamp test
     
 Expected output should look like:
 
