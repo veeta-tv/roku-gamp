@@ -231,7 +231,7 @@ Function gamobileSendHit(hit_params As Object) As Void
   url = m.gamobile.url
 
   ' first set immutables  
-  full_params = "v=" + tostr(m.gamobile.version)                ' Measurement Protocol Version
+  full_params = "v=" + m.gamobile.version                ' Measurement Protocol Version
 
   ' next set session and hit params.  hit params can override session params
   merged_params = {}
@@ -253,7 +253,7 @@ Function gamobileSendHit(hit_params As Object) As Void
     postStr = full_params + "&tid=" + Box(tracking_id).Escape()
 
     ' Cache buster; docs say this should be last
-    postStr = postStr + "&z=" + tostr(m.gamobile.next_z)
+    postStr = postStr + "&z=" + Box(m.gamobile.next_z).toStr()
     m.gamobile.next_z = m.gamobile.next_z + 1
 
     didSend = request.AsyncPostFromString(postStr)
