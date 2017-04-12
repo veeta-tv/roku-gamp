@@ -40,11 +40,17 @@ Function Main(args As Dynamic) As void
 
     if args.SceneGraph <> invalid and args.SceneGraph = "true" then
       print "Running SceneGraph example"
+      port = CreateObject("roMessagePort")
       screen = CreateObject("roSGScreen")
+      screen.SetMessagePort(port)
       scene = screen.CreateScene("GampScene")
       screen.show()
+      scene.observeField("done", port)
       while true
-        msg = wait(6000, screen.GetMessagePort())
+        msg = wait(0, port)
+        if type(msg) = "roSGNodeEvent" and msg.getField() = "done"
+          exit while
+        end if
       end while
       END
     end if

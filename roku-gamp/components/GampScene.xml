@@ -58,12 +58,19 @@ Function onTimer()
     m.gampTask.exception = { description: "metadata request returned HTTP status 404" }
   else if m.eventIndex = 3
     m.gampTask.transaction = { transactionId: "Purchase-Code", affiliation: "", revenue: "1.99" }
+  else if m.eventIndex = 4
+    print "Exiting Scene"
+    m.top.done = true
   end if
 End Function
  
 ]]>
 </script>
  
+  <interface>
+    <field id="done" type="boolean" value="false"/>
+  </interface>
+
   <children>
     <GampTask
       id="GampTask"/>
