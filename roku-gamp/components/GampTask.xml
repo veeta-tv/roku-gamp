@@ -41,7 +41,6 @@
 
 <script type="text/brightscript" uri="pkg:/source/googleAnalytics.brs"/>
 <script type="text/brightscript" uri="pkg:/source/common/generalUtils.brs"/>
-<script type="text/brightscript" uri="pkg:/source/common/url.brs"/>
  
 <script type="text/brightscript" >
 <![CDATA[

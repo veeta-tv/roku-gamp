@@ -52,11 +52,11 @@ Function initGAMobile(tracking_ids As Dynamic, client_id As String, custom_sessi
   app_info = CreateObject("roAppInfo")
   device = createObject("roDeviceInfo")
   gamobile.session_params = {
-    an: URLEncode(app_info.GetTitle())        ' App name.
-    av: URLEncode(app_info.GetVersion())      ' App version.
-    aid: URLEncode(app_info.GetID())          ' App Id.
-    cid: URLEncode(client_id)                 ' Client Id
-    aiid: URLEncode(device.getModel())        ' App Installer Id.
+    an: Box(app_info.GetTitle()).Escape()        ' App name.
+    av: Box(app_info.GetVersion()).Escape()      ' App version.
+    aid: Box(app_info.GetID()).Escape()          ' App Id.
+    cid: Box(client_id).Escape()                 ' Client Id
+    aiid: Box(device.getModel()).Escape()        ' App Installer Id.
   }
 
   ' Allow any arbitrary params to be sent with the hits
@@ -107,9 +107,9 @@ Function gamobilePageView(hostname="" As String, page="" As String, title="" As 
   
   hit_params = {
     t: "pageview"
-    dh: URLEncode(hostname)   ' Document hostname
-    dp: URLEncode(page)       ' Page
-    dt: URLEncode(title)      ' Title
+    dh: Box(hostname).Escape()   ' Document hostname
+    dp: Box(page).Escape()       ' Page
+    dt: Box(title).Escape()      ' Title
   }
   gamobileSendHit(hit_params)
 End Function
@@ -132,11 +132,11 @@ Function gamobileEvent(category As String, action As String, label="" As String,
 
   hit_params = {
     t: "event"
-    ec: URLEncode(category)   ' Event Category. Required.
-    ea: URLEncode(action)     ' Event Action. Required.
+    ec: Box(category).Escape()   ' Event Category. Required.
+    ea: Box(action).Escape()     ' Event Action. Required.
   }
-  if label <> "" then hit_params.el = URLEncode(label)      ' Event label.
-  if value <> "" then hit_params.ev = URLEncode(value)      ' Event value.
+  if label <> "" then hit_params.el = Box(label).Escape()      ' Event label.
+  if value <> "" then hit_params.ev = Box(value).Escape()      ' Event value.
   gamobileSendHit(hit_params)
 End Function
 
@@ -156,7 +156,7 @@ Function gamobileScreenView(screen_name As String) As Void
 
   hit_params = {
     t: "screenview"
-    cd: URLEncode(screen_name)                ' Screen name / content description.
+    cd: Box(screen_name).Escape()                ' Screen name / content description.
   }
   gamobileSendHit(hit_params)
 End Function
@@ -181,12 +181,12 @@ Function gamobileTransaction(transaction_id As String, affiliation="" As String,
 
   hit_params = {
     t: "transaction"
-    ti: URLEncode(transaction_id)  ' Transaction ID
+    ti: Box(transaction_id).Escape()  ' Transaction ID
   }
-  if affiliation <> "" then hit_params.ta = URLEncode(affiliation)   ' Transaction Affiliation
-  if revenue <> "" then hit_params.tr = URLEncode(revenue)           ' Transaction Revenue ("This value should include any shipping or tax costs" - Google)
-  if shipping <> "" then hit_params.ts = URLEncode(shipping)         ' Transaction Shipping
-  if tax <> "" then hit_params.tt = URLEncode(tax)                   ' Transaction Tax
+  if affiliation <> "" then hit_params.ta = Box(affiliation).Escape()   ' Transaction Affiliation
+  if revenue <> "" then hit_params.tr = Box(revenue).Escape()           ' Transaction Revenue ("This value should include any shipping or tax costs" - Google)
+  if shipping <> "" then hit_params.ts = Box(shipping).Escape()         ' Transaction Shipping
+  if tax <> "" then hit_params.tt = Box(tax).Escape()                   ' Transaction Tax
   gamobileSendHit(hit_params)
 End Function
 
@@ -209,7 +209,7 @@ Function gamobileException(description As String) As Void
   
   hit_params = {
     t: "exception" 
-    exd: URLEncode(description)       ' Exception description.
+    exd: Box(description).Escape()       ' Exception description.
     exf: "0"                          ' Exception is fatal? (we can't capture fatals in brightscript)
   }
   gamobileSendHit(hit_params)
@@ -219,7 +219,7 @@ Function gamobileTiming() As Void
   'TODO: implement this
 End Function
 
-' @hit_params   Associative array of params with string keys and values.  Values must already be URLEncoded
+' @hit_params   Associative array of params with string keys and values.  Values must already be urlencoded
 Function gamobileSendHit(hit_params As Object) As Void
   if m.gamobile.enable <> true then
     if m.gamobile.debug
@@ -250,7 +250,7 @@ Function gamobileSendHit(hit_params As Object) As Void
     request.SetUrl(url)
     request.SetMessagePort(m.gamobile.asyncMsgPort)
 
-    postStr = full_params + "&tid=" + URLEncode(tracking_id)
+    postStr = full_params + "&tid=" + Box(tracking_id).Escape()
 
     ' Cache buster; docs say this should be last
     postStr = postStr + "&z=" + tostr(m.gamobile.next_z)
