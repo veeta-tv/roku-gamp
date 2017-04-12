@@ -21,3 +21,8 @@ VERSION = 1.0
 ZIP_EXCLUDE= -x xml/* -x artwork/* -x \*.pkg -x storeassets\* -x keys\* -x \*/.\* -x *.git* -x *.DS* -x *.pkg*
 
 include app.mk
+
+.PHONY: test
+
+test:
+	curl -d '' "http://${ROKU_DEV_TARGET}:8060/launch/dev?RunTests=true"
