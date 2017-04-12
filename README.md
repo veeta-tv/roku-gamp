@@ -43,7 +43,7 @@ Back in Google Analytics, under the tracking info section, select "User-ID". Rea
 
 ### Get and install the example channel:
 
-    $ git clone https://github.com/cdthompson/roku-gamp.git
+    $ git clone https://github.com/veeta-tv/roku-gamp.git
     $ cd roku-gamp/roku-gamp
     $ make ROKU_DEV_TARGET=192.168.0.100 DEVPASSWORD=passw0rd install
 
