@@ -6,11 +6,9 @@ Google Analytics Measurement Protocol for Roku Brightscript
 
 ## SDK1 (non-SceneGraph)
 
-Copy the following 3 files into your channel tree:
+Copy the following file into your channel tree:
 
 * [source/googleAnalytics.brs](https://github.com/veeta-tv/roku-gamp/blob/master/roku-gamp/source/googleAnalytics.brs)
-* [source/common/generalUtils.brs](https://github.com/veeta-tv/roku-gamp/blob/master/roku-gamp/source/common/generalUtils.brs)
-* [source/common/url.brs](https://github.com/veeta-tv/roku-gamp/blob/master/roku-gamp/source/common/url.brs)
 
 Look at [main.brs](https://github.com/veeta-tv/roku-gamp/blob/master/roku-gamp/source/main.brs#L56) for example SDK1 usage.
 
@@ -18,12 +16,10 @@ Look at [main.brs](https://github.com/veeta-tv/roku-gamp/blob/master/roku-gamp/s
 
 Scene graph uses a Task node to wrap the SDK1 sources.
 
-Copy the following 4 files into your channel tree:
+Copy the following 2 files into your channel tree:
 
 * [components/GampTask.xml](https://github.com/veeta-tv/roku-gamp/blob/master/roku-gamp/components/GampTask.xml)
 * [source/googleAnalytics.brs](https://github.com/veeta-tv/roku-gamp/blob/master/roku-gamp/source/googleAnalytics.brs)
-* [source/common/generalUtils.brs](https://github.com/veeta-tv/roku-gamp/blob/master/roku-gamp/source/common/generalUtils.brs)
-* [source/common/url.brs](https://github.com/veeta-tv/roku-gamp/blob/master/roku-gamp/source/common/url.brs)
 
 Look at [GampScene.xml](https://github.com/veeta-tv/roku-gamp/blob/master/roku-gamp/components/GampScene.xml) for example SceneGraph usage.
 
@@ -41,30 +37,42 @@ Back in Google Analytics, under the tracking info section, select "User-ID". Rea
 
 # Running the Example Channel
 
-### Get and install the example channel:
+### Makefile environment:
 
-    $ git clone https://github.com/veeta-tv/roku-gamp.git
-    $ cd roku-gamp/roku-gamp
-    $ make ROKU_DEV_TARGET=192.168.0.100 DEVPASSWORD=passw0rd install
+Substitute appropriate Roku device IP address and developer password here
 
-### Watch the Roku debug console:
+    $ export ROKU_DEV_TARGET=192.168.0.100
+    $ export DEVPASSWORD=passw0rd
 
-    $ telnet 192.168.0.100 8085
+### Run SDK1 example:
 
-Expected output should be:
+    $ cd roku-gamp && make install
+
+Expected console output should be:
 
     ------ Compiling dev 'roku-gamp' ------
 
     ------ Running dev 'roku-gamp' main ------
     Enabling tracking analytics
-    Analytics:Screen: Home
-    Analytics:Event: Registration/Complete
-    Analytics:Exception:
-    Analytics:Transaction: Purchase-Code
+    [GA] Screen: Home
+    ...
 
-### Run the unit tests
+### Run SceneGraph example:
 
-    $ curl -d '' "http://${ROKU_DEV_TARGET}:8060/launch/dev?RunTests=true"
+    $ make scenegraph
+
+Expected console output should be:
+
+    ------ Running dev 'roku-gamp' main ------
+    Running SceneGraph example
+    GampTask.init
+    GampScene.init
+    GampTask.execGampLoop
+    ...
+
+### Run the unit tests:
+
+    $ make test
     
 Expected output should look like:
 
