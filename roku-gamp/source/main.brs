@@ -32,6 +32,7 @@ Function Main(args As Dynamic) As void
     '
     ' After installing channel: curl -d '' "http://${ROKU_DEV_TARGET}:8060/launch/dev?RunTests=true"
     if args.RunTests <> invalid and args.RunTests = "true" and type(TestRunner) = "Function" then
+      print "Running unit tests.  This may take some time..."
       runner = TestRunner()
       runner.Run()
       END ' exit after tests
