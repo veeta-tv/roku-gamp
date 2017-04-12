@@ -72,6 +72,8 @@ Function Main(args As Dynamic) As void
       enableGAMobile(true)
     endif
 
+    setGADebug(true)
+
     ' Track channel screens
     gamobileScreenView("Home")
 
