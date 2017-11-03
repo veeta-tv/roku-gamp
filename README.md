@@ -1,3 +1,12 @@
+# NOTE!!  This library is deprecated.
+
+Oct 18, 2017 Roku announced native support for Google Analytics on their [developer blog](https://blog.roku.com/developer/roku-analytics-component).  As a result, this library will no longer be maintained.
+
+See [Roku Analytics Component](https://sdkdocs.roku.com/display/sdkdoc/Roku+Analytics+Component).
+
+
+-----
+
 # roku-gamp
 Google Analytics Measurement Protocol for Roku Brightscript
 
